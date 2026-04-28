@@ -7,6 +7,10 @@ This project is a web application that evaluates resumes based on job descriptio
 - Database: PostgreSQL
 
 
+<img width="1344" height="628" alt="admin" src="https://github.com/user-attachments/assets/8caab5a9-8210-4cf4-9353-7a81d19b18c8" />
+
+
+
 ## Features
 
 - Upload resumes
