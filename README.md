@@ -24,7 +24,7 @@ This project is a web application that evaluates resumes based on job descriptio
 - ## Setup Instructions
 
 ### 1. Clone the repository
-git clone https://github.com/yourusername/repo-name.git
+git clone https://github.com/shub-hamkaushik/ai_recuriter_tool
 
 ---
 
