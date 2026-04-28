@@ -1,0 +1,179 @@
+<div class="matching-container">
+  <div class="header-section">
+    <h1>Job-Centric Candidate Ranking</h1>
+    <p>AI-powered candidate matching and ranking for optimal job fits</p>
+  </div>
+
+  <!-- Job Selection -->
+  <mat-card class="job-selection-card">
+    <mat-card-header>
+      <mat-card-title>Select Job Position</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="job-select-field">
+        <mat-label>Job Position</mat-label>
+        <mat-select [(ngModel)]="selectedJob" (selectionChange)="onJobChange()">
+          <mat-option *ngFor="let job of jobs" [value]="job">
+            {{ job.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="job-details" *ngIf="selectedJob">
+        <div class="job-info">
+          <h3>{{ selectedJob.title }}</h3>
+          <p>{{ selectedJob.description }}</p>
+        </div>
+
+        <div class="job-requirements">
+          <div class="requirement-item">
+            <mat-icon>build</mat-icon>
+            <div>
+              <strong>Required Skills:</strong>
+              <mat-chip-set>
+                <mat-chip *ngFor="let skill of selectedJob.skills" class="skill-chip">
+                  {{ skill }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+
+          <div class="requirement-item">
+            <mat-icon>work</mat-icon>
+            <div>
+              <strong>Minimum Experience:</strong> {{ selectedJob.minExp }} years
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Ranked Leaderboard -->
+  <mat-card class="leaderboard-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>leaderboard</mat-icon>
+        Candidate Rankings
+      </mat-card-title>
+      <mat-card-subtitle>Ranked by overall match score</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="loading-state" *ngIf="isLoading">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Building ranked matches...</p>
+      </div>
+
+      <table mat-table [dataSource]="candidates" class="ranking-table" *ngIf="!isLoading">
+
+        <!-- Rank Column -->
+        <ng-container matColumnDef="rank">
+          <th mat-header-cell *matHeaderCellDef>Rank</th>
+          <td mat-cell *matCellDef="let candidate; let i = index">
+            <div class="rank-badge" [class]="candidate.status">
+              #{{ i + 1 }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Candidate</th>
+          <td mat-cell *matCellDef="let candidate">
+            <div class="candidate-info">
+              <div class="candidate-name">{{ candidate.name }}</div>
+              <div class="candidate-email">{{ candidate.email }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Skills Column -->
+        <ng-container matColumnDef="skills">
+          <th mat-header-cell *matHeaderCellDef>Skills</th>
+          <td mat-cell *matCellDef="let candidate">
+            <mat-chip-set class="skills-chips">
+              <mat-chip *ngFor="let skill of candidate.skills" class="skill-chip-small">
+                {{ skill }}
+              </mat-chip>
+            </mat-chip-set>
+          </td>
+        </ng-container>
+
+        <!-- Experience Column -->
+        <ng-container matColumnDef="experience">
+          <th mat-header-cell *matHeaderCellDef>Experience</th>
+          <td mat-cell *matCellDef="let candidate">{{ candidate.experience }} years</td>
+        </ng-container>
+
+        <!-- Skill Match Column -->
+        <ng-container matColumnDef="skillMatch">
+          <th mat-header-cell *matHeaderCellDef>Skill Match</th>
+          <td mat-cell *matCellDef="let candidate">
+            <div class="match-score">
+              <mat-progress-bar
+                mode="determinate"
+                [value]="candidate.skillMatch"
+                class="mini-progress">
+              </mat-progress-bar>
+              <span class="score-value" [style.color]="getScoreColor(candidate.skillMatch)">
+                {{ candidate.skillMatch }}%
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Experience Match Column -->
+        <ng-container matColumnDef="experienceMatch">
+          <th mat-header-cell *matHeaderCellDef>Exp Match</th>
+          <td mat-cell *matCellDef="let candidate">
+            <div class="match-score">
+              <mat-progress-bar
+                mode="determinate"
+                [value]="candidate.experienceMatch"
+                class="mini-progress">
+              </mat-progress-bar>
+              <span class="score-value" [style.color]="getScoreColor(candidate.experienceMatch)">
+                {{ candidate.experienceMatch }}%
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Overall Score Column -->
+        <ng-container matColumnDef="overallScore">
+          <th mat-header-cell *matHeaderCellDef>Overall Score</th>
+          <td mat-cell *matCellDef="let candidate">
+            <div class="overall-score" [class]="candidate.status">
+              <div class="score-circle" [style.border-color]="getScoreColor(candidate.overallScore)">
+                {{ candidate.overallScore }}%
+              </div>
+              <div class="score-label">{{ candidate.status | titlecase }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let candidate">
+            <button mat-icon-button [routerLink]="['/candidates', candidate.id]" matTooltip="View Profile">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Contact Candidate">
+              <mat-icon>email</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="ranking-row"></tr>
+      </table>
+
+      <div class="empty-state" *ngIf="!isLoading && selectedJob && candidates.length === 0">
+        <mat-icon>person_search</mat-icon>
+        <p>No ranked candidates found for this job yet.</p>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

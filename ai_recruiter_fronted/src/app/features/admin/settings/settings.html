@@ -1,0 +1,23 @@
+<div class="settings-container">
+  <h1>System Settings</h1>
+  <mat-card class="settings-card">
+    <mat-slide-toggle [(ngModel)]="enableAiSummaries">Enable AI summaries</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="enableFitExplanations">Enable fit explanations</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="auditLogging">Enable audit logging</mat-slide-toggle>
+    <button mat-raised-button color="primary" (click)="saveSettings()" [disabled]="isSaving">
+      {{ isSaving ? 'Saving...' : 'Save Settings' }}
+    </button>
+    <p *ngIf="saved">Settings saved.</p>
+  </mat-card>
+
+  <mat-card class="settings-card">
+    <h2>Audit Log</h2>
+    <p *ngIf="isLoadingLogs">Loading audit logs...</p>
+    <p *ngIf="!isLoadingLogs && auditLogs.length === 0">No audit entries yet.</p>
+    <div *ngFor="let log of auditLogs" class="audit-item">
+      <strong>{{ log.action }}</strong>
+      <span>{{ log.actor || 'system' }}</span>
+      <small>{{ log.created_at }}</small>
+    </div>
+  </mat-card>
+</div>

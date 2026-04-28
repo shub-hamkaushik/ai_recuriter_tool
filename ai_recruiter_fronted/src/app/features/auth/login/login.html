@@ -1,0 +1,22 @@
+<div class="login-container">
+
+  <div class="card">
+    <h2>AI Recruiter Login</h2>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <input [(ngModel)]="username" placeholder="Username" />
+    <input [(ngModel)]="password" type="password" placeholder="Password" />
+
+    <button (click)="login()">Login</button>
+
+    <div class="auth-links">
+      <a (click)="forgotPassword()">Forgot Password?</a>
+      <span class="separator">|</span>
+      <a (click)="createUser()">Create User</a>
+    </div>
+  </div>
+
+</div>

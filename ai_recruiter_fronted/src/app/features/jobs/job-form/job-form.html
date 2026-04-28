@@ -1,0 +1,250 @@
+<div class="job-form-container">
+  <!-- Header Section -->
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>work</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>{{ editingJobId ? 'Edit Job Position' : 'Create New Job Position' }}</h1>
+        <p>{{ editingJobId ? 'Update this job description and keep it aligned with hiring needs' : 'Fill in the details below to create an attractive job posting' }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-button (click)="router.navigate(['/jobs'])" class="cancel-btn">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Jobs
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div class="progress-section">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getFormProgress()"></div>
+    </div>
+    <span class="progress-text">{{ getFormProgress() }}% Complete</span>
+  </div>
+
+  <!-- Main Form -->
+  <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="job-form">
+    <div class="form-error" *ngIf="formError">
+      <mat-icon>error</mat-icon>
+      <span>{{ formError }}</span>
+    </div>
+
+    <!-- Basic Information Section -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          Basic Information
+        </mat-card-title>
+        <mat-card-subtitle>Essential details about the position</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Job Title</mat-label>
+          <input matInput
+                 formControlName="title"
+                 placeholder="e.g., Senior Frontend Developer"
+                 autocomplete="off">
+          <mat-icon matSuffix>work</mat-icon>
+          <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
+            {{ getErrorMessage('title') }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="department">
+              <mat-option *ngFor="let dept of departments" [value]="dept">
+                {{ dept }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('department')?.invalid && jobForm.get('department')?.touched">
+              Department is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Employment Type</mat-label>
+            <mat-select formControlName="employmentType">
+              <mat-option *ngFor="let type of employmentTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('employmentType')?.invalid && jobForm.get('employmentType')?.touched">
+              Employment type is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Experience Level</mat-label>
+            <mat-select formControlName="experienceLevel">
+              <mat-option *ngFor="let level of experienceLevels" [value]="level">
+                {{ level }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('experienceLevel')?.invalid && jobForm.get('experienceLevel')?.touched">
+              Experience level is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Location</mat-label>
+            <input matInput
+                   formControlName="location"
+                   placeholder="e.g., New York, NY or Remote"
+                   autocomplete="off">
+            <mat-icon matSuffix>location_on</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Salary Range (Optional)</mat-label>
+          <input matInput
+                 formControlName="salaryRange"
+                 placeholder="e.g., $80,000 - $120,000 per year"
+                 autocomplete="off">
+          <mat-icon matSuffix>attach_money</mat-icon>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Skills Section -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>stars</mat-icon>
+          Required Skills
+        </mat-card-title>
+        <mat-card-subtitle>Add the key skills and technologies needed for this role</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="skills-input-section">
+          <mat-form-field appearance="outline" class="skill-input">
+            <mat-label>Add Skill</mat-label>
+            <input matInput
+                   [(ngModel)]="currentSkill"
+                   (keydown.enter)="addSkill($event)"
+                   placeholder="e.g., React, Python, AWS"
+                   [ngModelOptions]="{standalone: true}">
+            <mat-icon matSuffix>add</mat-icon>
+          </mat-form-field>
+          <button mat-raised-button
+                  type="button"
+                  color="primary"
+                  (click)="addSkill($event)"
+                  [disabled]="!currentSkill.trim()"
+                  class="add-skill-btn">
+            Add Skill
+          </button>
+        </div>
+
+        <div class="skills-chips" *ngIf="skills.length > 0">
+          <mat-chip-listbox>
+            <mat-chip *ngFor="let skill of skills"
+                      [removable]="true"
+                      (removed)="removeSkill(skill)"
+                      class="skill-chip">
+              {{ skill.name }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Job Description Section -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>description</mat-icon>
+          Job Description
+        </mat-card-title>
+        <mat-card-subtitle>Provide a compelling description of the role and responsibilities</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Job Description</mat-label>
+          <textarea matInput
+                    formControlName="description"
+                    rows="6"
+                    placeholder="Describe the role, responsibilities, and what the candidate will be doing..."></textarea>
+          <mat-error *ngIf="jobForm.get('description')?.invalid && jobForm.get('description')?.touched">
+            {{ getErrorMessage('description') }}
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Requirements Section -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>checklist</mat-icon>
+          Requirements & Qualifications
+        </mat-card-title>
+        <mat-card-subtitle>List the must-have qualifications and requirements</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Requirements</mat-label>
+          <textarea matInput
+                    formControlName="requirements"
+                    rows="4"
+                    placeholder="• Bachelor's degree in Computer Science&#10;• 3+ years of experience&#10;• Proficiency in JavaScript/TypeScript"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Benefits Section -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>celebration</mat-icon>
+          Benefits & Perks (Optional)
+        </mat-card-title>
+        <mat-card-subtitle>Highlight what makes this job attractive</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Benefits</mat-label>
+          <textarea matInput
+                    formControlName="benefits"
+                    rows="3"
+                    placeholder="• Competitive salary and equity&#10;• Health, dental, and vision insurance&#10;• Flexible work arrangements&#10;• Professional development budget"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button mat-button
+              type="button"
+              (click)="router.navigate(['/jobs'])"
+              class="cancel-btn">
+        Cancel
+      </button>
+      <button mat-raised-button
+              color="primary"
+              type="button"
+              (click)="onSubmit()"
+              [disabled]="isSubmitting"
+              class="submit-btn">
+        <mat-icon *ngIf="isSubmitting">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+        {{ isSubmitting ? 'Saving...' : (editingJobId ? 'Save Job' : 'Create Job') }}
+      </button>
+    </div>
+  </form>
+</div>

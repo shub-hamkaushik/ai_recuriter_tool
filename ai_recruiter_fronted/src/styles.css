@@ -1,0 +1,92 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Ensure proper scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Material theme overrides for better consistency */
+.mat-mdc-card {
+  border-radius: 16px !important;
+}
+
+.mat-mdc-button {
+  border-radius: 8px !important;
+}
+
+.mat-mdc-chip {
+  border-radius: 16px !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.5);
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+body .snackbar-success {
+  --mdc-snackbar-container-color: #166534;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #d1fae5;
+}
+
+body .snackbar-error {
+  --mdc-snackbar-container-color: #991b1b;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fee2e2;
+}

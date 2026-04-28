@@ -1,0 +1,54 @@
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Dashboard</h1>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    @for (card of summaryCards; track card.title) {
+      <mat-card class="summary-card" [class.hover-lift]="true">
+        <mat-card-content class="card-content">
+          <div class="card-icon" [class]="card.color">
+            <mat-icon>{{ card.icon }}</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>{{ card.value }}</h3>
+            <p>{{ card.title }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <!-- Recent Activity Feed -->
+  <div class="activity-section">
+    <h2>Recent Activity</h2>
+    <mat-card class="activity-card">
+      <mat-card-content>
+        <div class="activity-state" *ngIf="isLoading">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Loading recent activity...</p>
+        </div>
+
+        <ul class="activity-list">
+          @for (activity of recentActivities; track activity.message) {
+            <li class="activity-item">
+              <div class="activity-icon">
+                <mat-icon [class]="activity.type === 'resume' ? 'description' :
+                                   activity.type === 'job' ? 'work' : 'check_circle'">
+                </mat-icon>
+              </div>
+              <div class="activity-content">
+                <p>{{ activity.message }}</p>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <div class="activity-state" *ngIf="!isLoading && recentActivities.length === 0">
+          <mat-icon>event_note</mat-icon>
+          <p>No recent activity yet.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

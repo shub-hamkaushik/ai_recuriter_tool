@@ -1,0 +1,7 @@
+.admin-container { padding: 1rem; }
+.user-card { margin-bottom: 1rem; padding: 1rem; }
+.user-row { display: grid; grid-template-columns: 1fr 180px 140px 100px; gap: 1rem; align-items: center; }
+
+@media (max-width: 768px) {
+  .user-row { grid-template-columns: 1fr; }
+}

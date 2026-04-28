@@ -1,0 +1,20 @@
+<div class="admin-container">
+  <h1>User Management</h1>
+  <mat-card class="user-card" *ngFor="let user of users">
+    <div class="user-row">
+      <div>
+        <h3>{{ user.username }}</h3>
+        <p>{{ user.email }}</p>
+      </div>
+      <mat-select [(ngModel)]="user.role">
+        <mat-option value="admin">Admin</mat-option>
+        <mat-option value="hr">HR</mat-option>
+      </mat-select>
+      <mat-slide-toggle [(ngModel)]="user.is_active">Active</mat-slide-toggle>
+      <button mat-raised-button color="primary" (click)="saveUser(user)">
+        <mat-icon>save</mat-icon>
+        Save
+      </button>
+    </div>
+  </mat-card>
+</div>

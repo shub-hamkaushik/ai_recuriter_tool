@@ -1,0 +1,25 @@
+<div class="register-container">
+  <div class="card">
+    <h2>Create New User</h2>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+
+    <input [(ngModel)]="username" placeholder="Username" />
+    <input [(ngModel)]="email" type="email" placeholder="Email" />
+    <input [(ngModel)]="password" type="password" placeholder="Password" />
+    
+    <select [(ngModel)]="role">
+      <option value="hr">HR</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button (click)="register()">Create User</button>
+    <button (click)="goBack()" class="secondary-button">Back to Login</button>
+  </div>
+</div>

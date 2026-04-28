@@ -1,0 +1,155 @@
+<div class="candidate-detail-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="candidate-header">
+      <div class="candidate-avatar">
+        <mat-icon class="avatar-icon">person</mat-icon>
+      </div>
+      <div class="candidate-info">
+        <h1>{{ candidate.name }}</h1>
+        <p class="candidate-email">{{ candidate.email }}</p>
+        <p class="candidate-experience">{{ candidate.experienceYears }} Years Experience</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary">
+        <mat-icon>download</mat-icon>
+        Download Resume
+      </button>
+      <button mat-raised-button color="accent">
+        <mat-icon>email</mat-icon>
+        Contact
+      </button>
+      <button mat-raised-button color="primary" (click)="reprocessCandidate()" [disabled]="isReprocessing">
+        <mat-icon>{{ isReprocessing ? 'hourglass_empty' : 'auto_fix_high' }}</mat-icon>
+        {{ isReprocessing ? 'Reprocessing...' : 'Reprocess Resume' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Split Pane Layout -->
+  <div class="split-pane">
+
+    <!-- Left Pane: Candidate Profile -->
+    <div class="left-pane">
+      <mat-card class="profile-card">
+        <mat-card-header>
+          <mat-card-title>Profile Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+          <!-- Skills -->
+          <div class="profile-section">
+            <h3>Skills</h3>
+            <mat-chip-set>
+              <mat-chip *ngFor="let skill of candidate.skills" class="skill-chip">
+                {{ skill }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Education -->
+          <div class="profile-section">
+            <h3>Education</h3>
+            <p>{{ candidate.education }}</p>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Experience -->
+          <div class="profile-section">
+            <h3>Professional Experience</h3>
+            <p>{{ candidate.experienceDescription }}</p>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="profile-section">
+            <h3>Resume Text Preview</h3>
+            <p>{{ candidate.resumeText }}</p>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Pane: AI Analysis & Matches -->
+    <div class="right-pane">
+
+      <!-- AI Summary -->
+      <mat-card class="ai-summary-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>smart_toy</mat-icon>
+            AI-Generated Summary
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ candidate.summary }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Match Analysis -->
+      <mat-card class="match-analysis-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>analytics</mat-icon>
+            Job Match Analysis
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="matched-jobs">
+            <div class="empty-matches" *ngIf="matchedJobs.length === 0">
+              <mat-icon>analytics</mat-icon>
+              <p>No match data available yet for this candidate.</p>
+            </div>
+            <div *ngFor="let match of matchedJobs" class="match-item">
+              <div class="match-header">
+                <h4>{{ match.job }}</h4>
+                <div class="overall-score" [style.color]="getScoreColor(match.overallScore)">
+                  {{ match.overallScore }}%
+                </div>
+              </div>
+
+              <!-- Match Gauge -->
+              <div class="match-gauge">
+                <div class="gauge-item">
+                  <span class="gauge-label">Skill Match</span>
+                  <div class="gauge-bar">
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="match.skillMatch"
+                      [style.--progress-color]="getScoreColor(match.skillMatch)">
+                    </mat-progress-bar>
+                  </div>
+                  <span class="gauge-value">{{ match.skillMatch }}%</span>
+                </div>
+
+                <div class="gauge-item">
+                  <span class="gauge-label">Experience Match</span>
+                  <div class="gauge-bar">
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="match.experienceMatch"
+                      [style.--progress-color]="getScoreColor(match.experienceMatch)">
+                    </mat-progress-bar>
+                  </div>
+                  <span class="gauge-value">{{ match.experienceMatch }}%</span>
+                </div>
+              </div>
+
+              <div class="match-label" [style.color]="getScoreColor(match.overallScore)">
+                {{ getScoreLabel(match.overallScore) }}
+              </div>
+              <p *ngIf="match.fitExplanation">{{ match.fitExplanation }}</p>
+              <p *ngIf="match.hiringRecommendation"><strong>Recommendation:</strong> {{ match.hiringRecommendation }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </div>
+</div>
